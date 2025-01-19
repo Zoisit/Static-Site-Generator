@@ -13,5 +13,8 @@ class HTMLNode():
             return ""
         return " " + " ".join(list(map(lambda key: f'{key}="{self.props[key]}"', self.props.keys())))
     
+    def __eq__(self, other):
+        return self.tag == other.tag and self.value == other.value and self.children == other.children and self.props == other.props
+
     def __repr__(self):
         return f'HTMLNode(tag={"None" if self.tag == None else f'"{self.tag}"'}, value={"None" if self.value == None else f'"{self.value}"'}, children={"None" if self.children == None else f"{self.children}"}, props={"None" if self.props == None else f"[{self.props_to_html()}]"})' 
