@@ -1,5 +1,6 @@
 from enum import Enum
 from leafnode import LeafNode
+from markdown import extract_markdown_images, extract_markdown_links
 
 class TextType(Enum):
     NORMAL = "normal"
@@ -60,3 +61,40 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 new_nodes.append(TextNode(new_strings[n], text_type))
 
     return new_nodes
+
+def __split_nodes_markdown(old_nodes, func, text_type, match_prefix=""):
+    new_nodes = []
+    for old_node in old_nodes:
+        remaining_text = old_node.text
+        matches = func(remaining_text)
+
+        if len(matches) == 0:
+            new_nodes.append(old_node)
+            continue
+
+        for match in matches:
+            match_text = match_prefix + f"[{match[0]}]({match[1]})"
+            new_text = remaining_text.split(match_text, 1)
+            if new_text[0].strip() != "":
+                new_nodes.append(TextNode(new_text[0], TextType.NORMAL))
+            new_nodes.append(TextNode(match[0], text_type, match[1]))
+            remaining_text = new_text[1]
+
+        if remaining_text != "":
+            new_nodes.append(TextNode(remaining_text, TextType.NORMAL))
+
+    return new_nodes
+
+def split_nodes_image(old_nodes):
+    return __split_nodes_markdown(old_nodes, extract_markdown_images, TextType.IMAGE, "!")
+
+def split_nodes_link(old_nodes):
+    return __split_nodes_markdown(old_nodes, extract_markdown_links, TextType.LINK)
+
+def text_to_textnodes(text):
+    nodes = [TextNode(text, TextType.NORMAL)]
+    delimiter = [(TextType.BOLD, '**'), (TextType.ITALIC, "*"), (TextType.CODE, '`')]
+    for t, d in delimiter:
+        nodes = split_nodes_delimiter(nodes, d, t)
+    return split_nodes_link(split_nodes_image(nodes))
+
