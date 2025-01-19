@@ -30,10 +30,10 @@ class TestLeafNode(unittest.TestCase):
         self.assertTrue("All leaf nodes must have a value" in str(context.exception))
 
         node = LeafNode(None, "LeafNode value")
-        self.assertTrue(node.to_html(), "LeafNode value")
+        self.assertEqual(node.to_html(), "LeafNode value")
 
         node = LeafNode("p", "LeafNode value")
-        self.assertTrue(node.to_html(), "<p>LeafNode value</p>")
+        self.assertEqual(node.to_html(), "<p>LeafNode value</p>")
 
 if __name__ == "__main__":
     unittest.main()
