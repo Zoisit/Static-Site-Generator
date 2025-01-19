@@ -136,6 +136,19 @@ class TestTextNode(unittest.TestCase):
                 TextNode(" word", TextType.NORMAL),
             ]
         self.assertEqual(new_nodes, result)
+        
+        ## test similar delimiters
+        node = TextNode("**bold** and *italic*", TextType.NORMAL)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        new_nodes = split_nodes_delimiter(new_nodes, "*", TextType.ITALIC)
+        self.assertListEqual(
+            [
+                TextNode("bold", TextType.BOLD),
+                TextNode(" and ", TextType.NORMAL),
+                TextNode("italic", TextType.ITALIC),
+            ],
+            new_nodes,
+        )
 
         ##TODO: process non-text nodes
 

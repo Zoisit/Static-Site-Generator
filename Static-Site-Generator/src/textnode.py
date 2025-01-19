@@ -52,6 +52,8 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         if len(new_strings) % 2 == 0:
             raise Exception("Closing delimiter is missing")
         for n in range(len(new_strings)):
+            if new_strings[n] == "":
+                continue
             if n % 2 == 0:
                 new_nodes.append(TextNode(new_strings[n], old_node.text_type))
             else:
