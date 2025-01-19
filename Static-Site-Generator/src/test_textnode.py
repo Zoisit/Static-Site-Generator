@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import TextNode, TextType, text_node_to_html_node
+from textnode import TextNode, TextType, text_node_to_html_node, split_nodes_delimiter
 from leafnode import LeafNode
 
 
@@ -93,6 +93,54 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(result.value, "")
         self.assertEqual(result.props, {"src": "www.test.url", "alt": "test text"})
         
+    def test_split_nodes_delimiter(self):
+        ## exception
+        node = TextNode("This is text with a `code block word", TextType.NORMAL)
+        with self.assertRaises(Exception) as context:
+            split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertTrue("Closing delimiter is missing" in str(context.exception))
+        
+        node = TextNode("This is text with one `code block word and another `code block` word", TextType.NORMAL)
+        with self.assertRaises(Exception) as context:
+            split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertTrue("Closing delimiter is missing" in str(context.exception))
+        
+        ## base case
+        node = TextNode("This is text with a `code block` word", TextType.NORMAL)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        result = [
+            TextNode("This is text with a ", TextType.NORMAL),
+            TextNode("code block", TextType.CODE),
+            TextNode(" word", TextType.NORMAL),
+        ]
+        self.assertEqual(new_nodes, result)
+
+        ## don't touch non-normal text
+        node = TextNode("*This is bold text with a `code block` word and another `code block` word*", TextType.BOLD)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        result = [
+            TextNode("*This is bold text with a `code block` word and another `code block` word*", TextType.BOLD),
+        ]
+        self.assertEqual(new_nodes, result)
+
+        ## test different delimiters
+        delimiter = [(TextType.BOLD, "*"), (TextType.ITALIC, '**'), (TextType.CODE, '`')]
+        for t, d in delimiter:
+            node = TextNode(f"This is text with a {d}delimiter block{d} word and another {d}delimiter block{d} word", TextType.NORMAL)
+            new_nodes = split_nodes_delimiter([node], "`", t)
+            result = [
+                TextNode("This is text with a ", TextType.NORMAL),
+                TextNode("delimiter block", t),
+                TextNode(" word and another ", TextType.NORMAL),
+                TextNode("delimiter block", t),
+                TextNode(" word", TextType.NORMAL),
+            ]
+        self.assertEqual(new_nodes, result)
+
+        ##TODO: process non-text nodes
+
+        #TODO: add tests for nested
+        ## "This is text with a **bolded phrase** in the middle"
 
 if __name__ == "__main__":
     unittest.main()

@@ -37,3 +37,24 @@ def text_node_to_html_node(text_node):
             return LeafNode("img", "", props={"src": text_node.url, "alt": text_node.text})
         case _:
             raise Exception("Not a valid TextType")
+
+
+## TODO: add processing of nested (recursive)
+## TODO: also process non-text nodes         
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    new_nodes = []
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.NORMAL:
+            new_nodes.append(old_node)
+            continue
+        
+        new_strings = old_node.text.split(delimiter)
+        if len(new_strings) % 2 == 0:
+            raise Exception("Closing delimiter is missing")
+        for n in range(len(new_strings)):
+            if n % 2 == 0:
+                new_nodes.append(TextNode(new_strings[n], old_node.text_type))
+            else:
+                new_nodes.append(TextNode(new_strings[n], text_type))
+
+    return new_nodes
