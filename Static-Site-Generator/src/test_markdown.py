@@ -1,5 +1,5 @@
 import unittest
-from markdown import extract_markdown_images, extract_markdown_links, markdown_to_blocks
+from markdown import extract_markdown_images, extract_markdown_links, markdown_to_blocks, block_to_block_type, BlockType
 
 
 class TestMarkdown(unittest.TestCase):
@@ -37,3 +37,37 @@ class TestMarkdown(unittest.TestCase):
         * This is another list item"""]
 
         self.assertEqual(markdown_to_blocks(markdown), exp)
+
+    def test_block_to_block_type(self):
+        #HEADING = "heading"
+        inputs = ["# h1", "## h2", "### h3", "#### h4", "##### h5", "###### h6", "####### to much", "sdf## should not", "###"]
+        types = ["heading"] * 6 + ["normal paragraph"] * 3
+
+        for inp, type in zip(inputs, types):
+            self.assertEqual(block_to_block_type(inp), type)
+
+        # CODE = "code"
+        inputs = ["```some code```", "```not code```text", "text```not code```"]
+        types = ["code"] + ["normal paragraph"] * 2
+        for inp, type in zip(inputs, types):
+            self.assertEqual(block_to_block_type(inp), type)
+        
+        # QUOTE = "quote"
+        inputs = ["> quote", ">quote \n> with\n>\n>4 lines", "not > a quote", "> also \n not \n > a quote"]
+        types = ["quote"] * 2 + ["normal paragraph"] * 2
+        for inp, type in zip(inputs, types):
+            self.assertEqual(block_to_block_type(inp), type)
+
+        # UNORDERED_LIST = "unordered list"
+        inputs = ["* line 1", "* line 1\n* line 2\n* line 3", "- line 1", "- line 1\n- line 2\n- line 3", "*line false\n* line 2\n* line 3", "* line 1\n line false\n* line 3", "* line 1\n- line 2"]
+        types = ["unordered list"] * 4 + ["normal paragraph"] * 3
+        for inp, type in zip(inputs, types):
+            self.assertEqual(block_to_block_type(inp), type)
+        
+        # ORDERED_LIST = "ordered list"
+        inputs = ["1. line 1", "1. line 1\n2. line 2\n3. line 3", "0. line 1\n1. line 2\n2. line 3", "1. line false\n* line 2\n3. line 3"]
+        types = ["ordered list"] * 2 + ["normal paragraph"] * 2
+        for inp, type in zip(inputs, types):
+            self.assertEqual(block_to_block_type(inp), type)
+
+        # NORMAL = "normal paragraph" - one in other
