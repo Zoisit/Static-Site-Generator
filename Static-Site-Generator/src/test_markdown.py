@@ -1,5 +1,5 @@
 import unittest
-from markdown import extract_markdown_images, extract_markdown_links, markdown_to_blocks, block_to_block_type, BlockType
+from markdown import extract_markdown_images, extract_markdown_links, markdown_to_blocks, block_to_block_type
 
 
 class TestMarkdown(unittest.TestCase):
@@ -32,9 +32,7 @@ class TestMarkdown(unittest.TestCase):
         * This is another list item"""
 
 
-        exp = ["# This is a heading", "This is a paragraph of text. It has some **bold** and *italic* words inside of it.", """* This is the first list item in a list block
-        * This is a list item
-        * This is another list item"""]
+        exp = ["# This is a heading", "This is a paragraph of text. It has some **bold** and *italic* words inside of it.", """* This is the first list item in a list block\n* This is a list item\n* This is another list item"""]
 
         self.assertEqual(markdown_to_blocks(markdown), exp)
 
@@ -71,3 +69,4 @@ class TestMarkdown(unittest.TestCase):
             self.assertEqual(block_to_block_type(inp), type)
 
         # NORMAL = "normal paragraph" - one in other
+    

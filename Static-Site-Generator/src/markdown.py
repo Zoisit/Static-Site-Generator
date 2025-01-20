@@ -10,7 +10,7 @@ def extract_markdown_links(text):
     return matches
 
 def markdown_to_blocks(markdown):
-    return list(filter(lambda x: len(x) > 0, [m.strip() for m in markdown.split("\n\n")]))
+    return list(filter(lambda x: len(x) > 0, ["\n".join([sm.strip() for sm in m.strip().split("\n")]) if "\n" in m.strip() else m.strip() for m in markdown.split("\n\n")]))
 
 class BlockType(Enum):
     HEADING = "heading"
@@ -38,3 +38,6 @@ def block_to_block_type(markdown):
         return BlockType.ORDERED_LIST.value
     
     return BlockType.NORMAL.value
+
+
+

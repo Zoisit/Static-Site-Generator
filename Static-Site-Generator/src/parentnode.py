@@ -10,3 +10,6 @@ class ParentNode(HTMLNode):
         if self.children == None:
             raise ValueError("All parent nodes must have a least one child")
         return f"<{self.tag}>{"".join([c.to_html() for c in self.children])}</{self.tag}>"
+    
+    def __repr__(self):
+        return f"ParentNode({self.tag}, children: {self.children}, {self.props})"

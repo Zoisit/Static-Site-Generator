@@ -38,7 +38,7 @@ class TestTextNode(unittest.TestCase):
     def test_text_node_to_html_node(self):
         node = TextNode("test text", None)
         with self.assertRaises(Exception) as context:
-            print(text_node_to_html_node(node))
+            text_node_to_html_node(node)
         self.assertTrue("Not a valid TextType" in str(context.exception))
 
         ## normal text
