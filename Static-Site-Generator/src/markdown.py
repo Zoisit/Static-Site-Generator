@@ -30,9 +30,9 @@ def block_to_block_type(markdown):
         return BlockType.CODE.value
     
     lines = markdown.split("\n")
-    if all(l[0] == ">" for l in lines):
+    if all(l.startswith(">") for l in lines):
         return BlockType.QUOTE.value
-    if all(l[0:2] == "* " for l in lines) or all(l[0:2] == "- " for l in lines):
+    if all(l.startswith("* ") for l in lines) or all(l.startswith("- ") for l in lines):
         return BlockType.UNORDERED_LIST.value
     if all(lines[i][0:3] == f"{i+1}. " for i in range(0, len(lines))):
         return BlockType.ORDERED_LIST.value
