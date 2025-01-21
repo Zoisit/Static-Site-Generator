@@ -1,5 +1,5 @@
 import unittest
-from markdown import extract_markdown_images, extract_markdown_links, markdown_to_blocks, block_to_block_type
+from markdown import *
 
 
 class TestMarkdown(unittest.TestCase):
@@ -70,3 +70,15 @@ class TestMarkdown(unittest.TestCase):
 
         # NORMAL = "normal paragraph" - one in other
     
+    def test_extract_title(self):
+        text = "# Hello"
+        exp = "Hello"
+        self.assertEqual(extract_title(text), exp)
+
+        text = "test in\n ## wrong\n # Hello\norder"
+        self.assertEqual(extract_title(text), exp)
+
+        text = "Hello"
+        with self.assertRaises(Exception) as context:
+            extract_title(text)
+        self.assertTrue("No header (h1) found" in str(context.exception))

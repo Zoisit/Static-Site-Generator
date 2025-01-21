@@ -25,7 +25,7 @@ def markdown_to_html_node(markdown):
                 content = block[3:-3]
                 nodes.append(ParentNode("pre", "", [ParentNode("code", __get_children(content))]))
             case BlockType.QUOTE.value:
-                content = __get_block_values(block, 1)
+                content = " ".join(__get_block_values(block, 1)).strip()
                 nodes.append(ParentNode("blockquote", __get_children(content)))
             case BlockType.UNORDERED_LIST.value:
                 content = __get_block_values(block, 2)

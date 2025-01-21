@@ -40,4 +40,8 @@ def block_to_block_type(markdown):
     return BlockType.NORMAL.value
 
 
-
+def extract_title(markdown):
+    for line in markdown.split("\n"):
+        if line.strip().startswith("# "):
+            return line.replace("#", "", 1).strip()
+    raise Exception("No header (h1) found")
