@@ -45,6 +45,14 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w") as f:
         f.write(template)
     
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for dir in listdir(dir_path_content):
+        if not path.isfile(path.join(dir_path_content, dir)):
+            generate_pages_recursive(path.join(dir_path_content, dir), template_path, path.join(dest_dir_path, dir))
+        else:
+            if dir.endswith(".md"):
+                generate_page(path.join(dir_path_content, dir), template_path, path.join(dest_dir_path, dir.replace(".md", ".html")))
+
 
 def main():
     testNode = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
@@ -52,6 +60,7 @@ def main():
 
     copy_dir("static", "public")
 
-    generate_page("content/index.md", "template.html", "public/index.html")
-    
+    #generate_page("content/index.md", "template.html", "public/index.html")
+    generate_pages_recursive("content", "template.html", "public")
+
 main()
